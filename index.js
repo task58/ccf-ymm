@@ -164,9 +164,9 @@ function generateCharacterListHTML(characters){
 
 	let firstTr = document.createElement("tr");
 	let excludeTh = document.createElement("th");
-	excludeTh.innerText = "Exclude"
+	excludeTh.innerText = "除外する"
 	let nameTh = document.createElement("th")
-	nameTh.innerText = "Name"
+	nameTh.innerText = "キャラクター名"
 	firstTr.appendChild(excludeTh)
 	firstTr.appendChild(nameTh)
 	tableNode.appendChild(firstTr);

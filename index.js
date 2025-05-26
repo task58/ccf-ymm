@@ -1,52 +1,83 @@
+/** @type HTMLElement | null */
+let inputElem
+
+/** @type HTMLElement | null */
+let outputElem
+
+/** @type HTMLElement | null */
+// let plOutputElem
+
+/** @type HTMLElement | null */
+let submitButton
+
+/** @type HTMLElement | null */
+let copyButton
+
+/** @type HTMLElement | null */
+let donwloadButton
+
+/** @type HTMLElement | null */
+let uploadFileElem
+
+/** @type HTMLElement | null */
+let uploadButton
+
+/** @type HTMLElement | null */
+let charactersOutputElem;
+
+let perser = new DOMParser();
+
+let chat = [];
+let characters = [];
+let excludeCharacters = [];
+
+/**@type HTMLTableElement */
+let charactersOutputTable
+
 function onWindowLoad(){
-    let inputElem = document.getElementById("input");
-    let outputElem = document.getElementById("output");
-    let plOutputElem = document.getElementById("pls_out")
-    let submitButton = document.getElementById("submit");
-    let copyButton = document.getElementById("copy");
-    let donwloadButton = document.getElementById("download");
-    let uploadFileElem = document.getElementById("up_file");
-    let uploadButton = document.getElementById("up_btn");
-    
-    let perser = new DOMParser();
+    inputElem = document.getElementById("input");
+    outputElem = document.getElementById("output");
+    // plOutputElem = document.getElementById("pls_out")
+    submitButton = document.getElementById("submit");
+    copyButton = document.getElementById("copy");
+    donwloadButton = document.getElementById("download");
+    uploadFileElem = document.getElementById("up_file");
+    uploadButton = document.getElementById("up_btn");
+	charactersOutputElem = document.getElementById("ch_out");
 
     submitButton.addEventListener("click",()=>{
         // console.log("clicked");
 
+		chat = []
+		characters = []
+
         let inputText = inputElem.value;
         let html = perser.parseFromString(inputText,"text/html")
 
-        // console.log(html.body.children[0].children)
-
         let paragraphs = html.body.children;
-
-        let outputText = "";
-
-        let players = [];
 
         for(let paragraph of paragraphs){
 
-            let plname = paragraph.children[1].innerText;
-            let chat = paragraph.children[2].innerText.trim();
+            let chName = paragraph.children[1].innerText.replaceAll(","," ");
+            let chatText = paragraph.children[2].innerText.trim().replaceAll(","," ");
 
-            if(!players.includes(plname)){
-                players.push(plname);
+            if(!characters.includes(chName)){
+                characters.push(chName);
             }
 
-            outputText += plname;
-            outputText += ",";
-
-            // ""
-
-            outputText += chat;
-            outputText += "\n";
+			chat.push([chName,chatText])
         }
 
-        // console.log(outputText)
 
-        outputElem.value = outputText;
+        outputElem.value = generateCSVText(chat);
 
-        plOutputElem.value = players.toString().replaceAll(",","\n");
+        // plOutputElem.value = characters.toString().replaceAll(",","\n");
+
+		charactersOutputTable?.remove();
+		charactersOutputTable = generateCharacterListHTML(characters);
+		charactersOutputElem.appendChild(charactersOutputTable);
+
+		console.log(chat)
     })
 
     copyButton.addEventListener("click",()=>{
@@ -93,3 +124,58 @@ function onWindowLoad(){
 }
 
 window.addEventListener("load",onWindowLoad);
+
+/**
+ * 
+ * @param {string[][]} chatArr 
+ * @param {string[]} excludeCharacters 
+ */
+function generateCSVText(chatArr,excludeCharacters = []){
+	let outputText = "";
+	
+	chatArr.forEach((val)=>{
+		let name = val[0];
+		let chatText = val[1];
+
+		name = name.trim();
+		chatText = chatText.trim();
+
+		if(excludeCharacters.includes(name))return;
+
+		name.replaceAll(","," ");
+		chatText.replaceAll(","," ");
+
+		outputText += name;
+		outputText += ",";
+		outputText += chatText;
+		outputText += "\n";
+	})
+
+	return outputText;
+}
+
+/**
+ * 
+ * @param {string[]} characters 
+ */
+function generateCharacterListHTML(characters){
+	let tableNode = document.createElement("table");
+
+	let firstTr = document.createElement("tr");
+	let th1 = document.createElement("th")
+	th1.innerText = "Name"
+	firstTr.appendChild(th1)
+	tableNode.appendChild(firstTr);
+
+	characters.forEach((val)=>{
+		let tr2 = document.createElement("tr");
+
+		let nameTd = document.createElement("td");
+		nameTd.innerText = val;
+		tr2.appendChild(nameTd);
+		tableNode.appendChild(tr2);
+	})
+
+
+	return tableNode;
+}

@@ -5,21 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ここふぉログからYMM台本を生成するツール</title>
     <script src="./index.js"></script>
+	<style>
+		table, th, td {
+  			border: 1px solid black;
+		}
+	</style>
 </head>
 <body>
     <h1>ここふぉログからYMM台本を生成するツール</h1>
 
     <input type="file" name="upload" id="up_file"><input type="button" value="アップロード" id="up_btn">
     <br>
-    <textarea name="input" id="input"></textarea>
+	<p>ログのHTML</p>
+    <textarea name="input" id="input"></textarea><br>
     <br>
     <input type="button" id="submit" value="変換"><br>
     <input type="button" id="copy" value="台本をクリップボードにコピー">
     <input type="button" id="download" value="台本をダウンロード">
     <br>
     <textarea name="output" id="output" readonly style="width: 1000px; height: 500px;"></textarea><br>
-    <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea>
+    <!-- <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea> -->
     <br>
+	<div name="characters" id="ch_out"></div>
     
 </body>
 </html>

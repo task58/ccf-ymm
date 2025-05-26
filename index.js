@@ -4,6 +4,8 @@ function onWindowLoad(){
     let submitButton = document.getElementById("submit");
     let copyButton = document.getElementById("copy");
     let donwloadButton = document.getElementById("download");
+    let uploadFileElem = document.getElementById("up_file");
+    let uploadButton = document.getElementById("up_btn");
 
     let perser = new DOMParser();
 
@@ -56,6 +58,25 @@ function onWindowLoad(){
 		a.click();
 		a.remove();
 		URL.revokeObjectURL(url);
+    })
+
+    uploadButton.addEventListener("click",()=>{
+        if(!(uploadFileElem.files.length > 0)){
+			alert("no FILE")
+			return false;
+		}
+
+        let file = uploadFileElem.files[0]
+		let reader = new FileReader()
+		reader.readAsText(file)
+
+        function load(){
+            
+            inputElem.value = reader.result;
+            reader.removeEventListener("load",load)
+        }
+
+        reader.addEventListener("load",load)
     })
 }
 

@@ -1,12 +1,13 @@
 function onWindowLoad(){
     let inputElem = document.getElementById("input");
     let outputElem = document.getElementById("output");
+    let plOutputElem = document.getElementById("pls_out")
     let submitButton = document.getElementById("submit");
     let copyButton = document.getElementById("copy");
     let donwloadButton = document.getElementById("download");
     let uploadFileElem = document.getElementById("up_file");
     let uploadButton = document.getElementById("up_btn");
-
+    
     let perser = new DOMParser();
 
     submitButton.addEventListener("click",()=>{
@@ -21,20 +22,31 @@ function onWindowLoad(){
 
         let outputText = "";
 
+        let players = [];
+
         for(let paragraph of paragraphs){
 
-            outputText += paragraph.children[1].innerText;
+            let plname = paragraph.children[1].innerText;
+            let chat = paragraph.children[2].innerText.trim();
+
+            if(!players.includes(plname)){
+                players.push(plname);
+            }
+
+            outputText += plname;
             outputText += ",";
 
             // ""
 
-            outputText += paragraph.children[2].innerText.trim();
+            outputText += chat;
             outputText += "\n";
         }
 
         // console.log(outputText)
 
         outputElem.value = outputText;
+
+        plOutputElem.value = players.toString().replaceAll(",","\n");
     })
 
     copyButton.addEventListener("click",()=>{

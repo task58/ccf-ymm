@@ -3,6 +3,7 @@ function onWindowLoad(){
     let outputElem = document.getElementById("output");
     let submitButton = document.getElementById("submit");
     let copyButton = document.getElementById("copy");
+    let donwloadButton = document.getElementById("download");
 
     let perser = new DOMParser();
 
@@ -40,6 +41,21 @@ function onWindowLoad(){
         }
 
         navigator.clipboard.writeText(outputElem.value);
+    })
+
+    donwloadButton.addEventListener("click",()=>{
+        let text = outputElem.value;
+        let blob = new Blob([text],{type:"text/csv"});
+        let url = URL.createObjectURL(blob);
+		
+		let a = document.createElement("a");
+		a.href = url;
+        let now = new Date();
+
+		a.download = `CCF_CSV_${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.csv`;
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(url);
     })
 }
 

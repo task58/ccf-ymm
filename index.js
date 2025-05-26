@@ -23,7 +23,9 @@ function onWindowLoad(){
             outputText += paragraph.children[1].innerText;
             outputText += ",";
 
-            outputText += paragraph.children[2].innerText.slice(5);
+            // ""
+
+            outputText += paragraph.children[2].innerText.trim();
             outputText += "\n";
         }
 

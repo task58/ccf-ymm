@@ -2,6 +2,7 @@ function onWindowLoad(){
     let inputElem = document.getElementById("input");
     let outputElem = document.getElementById("output");
     let submitButton = document.getElementById("submit");
+    let copyButton = document.getElementById("copy");
 
     let perser = new DOMParser();
 
@@ -29,6 +30,14 @@ function onWindowLoad(){
         // console.log(outputText)
 
         outputElem.value = outputText;
+    })
+
+    copyButton.addEventListener("click",()=>{
+        if(!navigator.clipboard){
+            alert("利用できません。")
+        }
+
+        navigator.clipboard.writeText(outputElem.value);
     })
 }
 

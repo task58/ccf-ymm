@@ -50,6 +50,7 @@ function onWindowLoad(){
 
 		chat = []
 		characters = []
+		excludeCharacters = []
 
         let inputText = inputElem.value;
         let html = perser.parseFromString(inputText,"text/html")
@@ -69,7 +70,7 @@ function onWindowLoad(){
         }
 
 
-        outputElem.value = generateCSVText(chat);
+        outputElem.value = generateCSVText(chat,excludeCharacters);
 
         // plOutputElem.value = characters.toString().replaceAll(",","\n");
 
@@ -77,7 +78,7 @@ function onWindowLoad(){
 		charactersOutputTable = generateCharacterListHTML(characters);
 		charactersOutputElem.appendChild(charactersOutputTable);
 
-		console.log(chat)
+		// console.log(chat)
     })
 
     copyButton.addEventListener("click",()=>{
@@ -162,18 +163,37 @@ function generateCharacterListHTML(characters){
 	let tableNode = document.createElement("table");
 
 	let firstTr = document.createElement("tr");
-	let th1 = document.createElement("th")
-	th1.innerText = "Name"
-	firstTr.appendChild(th1)
+	let excludeTh = document.createElement("th");
+	excludeTh.innerText = "Exclude"
+	let nameTh = document.createElement("th")
+	nameTh.innerText = "Name"
+	firstTr.appendChild(excludeTh)
+	firstTr.appendChild(nameTh)
 	tableNode.appendChild(firstTr);
 
 	characters.forEach((val)=>{
-		let tr2 = document.createElement("tr");
+		let tr = document.createElement("tr");
+
+		let excludeTd = document.createElement("td");
+		let excludeCheckBox = document.createElement("input");
+		excludeCheckBox.type = "checkbox";
+		excludeCheckBox.addEventListener("click",()=>{
+			if(excludeCheckBox.checked){
+				excludeCharacters.push(val);
+			}else{
+				excludeCharacters.splice(excludeCharacters.indexOf(val),1);
+			}
+			outputElem.value = generateCSVText(chat,excludeCharacters);
+		})
+
+		excludeTd.appendChild(excludeCheckBox);
 
 		let nameTd = document.createElement("td");
 		nameTd.innerText = val;
-		tr2.appendChild(nameTd);
-		tableNode.appendChild(tr2);
+
+		tr.appendChild(excludeTd);
+		tr.appendChild(nameTd);
+		tableNode.appendChild(tr);
 	})
 
 

@@ -29,6 +29,7 @@ let perser = new DOMParser();
 
 let chat = [];
 let characters = [];
+let charactersInfos = [];
 let excludeCharacters = [];
 
 /**@type HTMLTableElement */
@@ -50,32 +51,47 @@ function onWindowLoad(){
 
 		chat = []
 		characters = []
+		charactersInfos = []
 		excludeCharacters = []
 
         let inputText = inputElem.value;
         let html = perser.parseFromString(inputText,"text/html")
 
+		/**@type HTMLParagraphElement[] */
         let paragraphs = html.body.children;
 
         for(let paragraph of paragraphs){
+
+			let c = paragraph.style.color.substring(4).slice(0,-1).split(",");
+			let color = "#";
+			c.forEach((v)=>{
+				color+= parseInt(v).toString(16);
+			})
+
+			// console.log(color);
 
             let chName = paragraph.children[1].innerText.replaceAll(","," ");
             let chatText = paragraph.children[2].innerText.trim().replaceAll(","," ");
 
             if(!characters.includes(chName)){
                 characters.push(chName);
+				charactersInfos.push({
+					name: chName,
+					color: color
+				});
             }
 
 			chat.push([chName,chatText])
         }
 
+		// console.log(charactersInfos);
 
         outputElem.value = generateCSVText(chat,excludeCharacters);
 
         // plOutputElem.value = characters.toString().replaceAll(",","\n");
 
 		charactersOutputTable?.remove();
-		charactersOutputTable = generateCharacterListHTML(characters);
+		charactersOutputTable = generateCharacterListHTML(charactersInfos);
 		charactersOutputElem.appendChild(charactersOutputTable);
 
 		// console.log(chat)
@@ -145,6 +161,7 @@ function generateCSVText(chatArr,excludeCharacters = []){
 
 		name.replaceAll(","," ");
 		chatText.replaceAll(","," ");
+        chatText.replaceAll('"'," ");
 
 		outputText += name;
 		outputText += ",";
@@ -163,15 +180,22 @@ function generateCharacterListHTML(characters){
 	let tableNode = document.createElement("table");
 
 	let firstTr = document.createElement("tr");
+
 	let excludeTh = document.createElement("th");
 	excludeTh.innerText = "除外する"
-	let nameTh = document.createElement("th")
+
+	let nameTh = document.createElement("th");
 	nameTh.innerText = "キャラクター名"
+
+	let colorTh = document.createElement("th");
+	colorTh.innerText = "色"
+
 	firstTr.appendChild(excludeTh)
 	firstTr.appendChild(nameTh)
+	firstTr.appendChild(colorTh)
 	tableNode.appendChild(firstTr);
 
-	characters.forEach((val)=>{
+	characters.forEach((val,index)=>{
 		let tr = document.createElement("tr");
 
 		let excludeTd = document.createElement("td");
@@ -179,9 +203,9 @@ function generateCharacterListHTML(characters){
 		excludeCheckBox.type = "checkbox";
 		excludeCheckBox.addEventListener("click",()=>{
 			if(excludeCheckBox.checked){
-				excludeCharacters.push(val);
+				excludeCharacters.push(val.name);
 			}else{
-				excludeCharacters.splice(excludeCharacters.indexOf(val),1);
+				excludeCharacters.splice(excludeCharacters.indexOf(val.name),1);
 			}
 			outputElem.value = generateCSVText(chat,excludeCharacters);
 		})
@@ -189,10 +213,22 @@ function generateCharacterListHTML(characters){
 		excludeTd.appendChild(excludeCheckBox);
 
 		let nameTd = document.createElement("td");
-		nameTd.innerText = val;
+		nameTd.innerText = val.name;
+
+		let colorTd = document.createElement("td");
+		// colorTd.innerText = val.color;
+        let colorInput = document.createElement("input");
+        colorInput.type = "color";
+        colorInput.value = val.color;
+        colorInput.addEventListener("input",()=>{
+            charactersInfos[index].color = colorInput.value;
+            // console.log(charactersInfos[index].color);
+        })
+        colorTd.appendChild(colorInput);
 
 		tr.appendChild(excludeTd);
 		tr.appendChild(nameTd);
+		tr.appendChild(colorTd);
 		tableNode.appendChild(tr);
 	})
 

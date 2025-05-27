@@ -194,7 +194,7 @@ function generateCharacterListHTML(characters){
 	firstTr.appendChild(colorTh)
 	tableNode.appendChild(firstTr);
 
-	characters.forEach((val)=>{
+	characters.forEach((val,index)=>{
 		let tr = document.createElement("tr");
 
 		let excludeTd = document.createElement("td");
@@ -215,7 +215,15 @@ function generateCharacterListHTML(characters){
 		nameTd.innerText = val.name;
 
 		let colorTd = document.createElement("td");
-		colorTd.innerText = val.color;
+		// colorTd.innerText = val.color;
+        let colorInput = document.createElement("input");
+        colorInput.type = "color";
+        colorInput.value = val.color;
+        colorInput.addEventListener("input",()=>{
+            charactersInfos[index].color = colorInput.value;
+            // console.log(charactersInfos[index].color);
+        })
+        colorTd.appendChild(colorInput);
 
 		tr.appendChild(excludeTd);
 		tr.appendChild(nameTd);

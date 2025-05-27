@@ -161,6 +161,7 @@ function generateCSVText(chatArr,excludeCharacters = []){
 
 		name.replaceAll(","," ");
 		chatText.replaceAll(","," ");
+        chatText.replaceAll('"'," ");
 
 		outputText += name;
 		outputText += ",";

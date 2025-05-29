@@ -30,6 +30,7 @@ let perser = new DOMParser();
 let chat = [];
 let characters = [];
 let charactersInfos = [];
+let replaceCharacters = {}
 let excludeCharacters = [];
 
 /**@type HTMLTableElement */
@@ -52,6 +53,7 @@ function onWindowLoad(){
 		chat = []
 		characters = []
 		charactersInfos = []
+		replaceCharacters = {}
 		excludeCharacters = []
 
         let inputText = inputElem.value;
@@ -147,7 +149,7 @@ window.addEventListener("load",onWindowLoad);
  * @param {string[][]} chatArr 
  * @param {string[]} excludeCharacters 
  */
-function generateCSVText(chatArr,excludeCharacters = []){
+function generateCSVText(chatArr,excludeCharacters = [],replaceCharacters = {}){
 	let outputText = "";
 	
 	chatArr.forEach((val)=>{
@@ -159,9 +161,14 @@ function generateCSVText(chatArr,excludeCharacters = []){
 
 		if(excludeCharacters.includes(name))return;
 
-		name.replaceAll(","," ");
-		chatText.replaceAll(","," ");
-        chatText.replaceAll('"'," ");
+		if(replaceCharacters[name]){
+			name = replaceCharacters[name];
+		}
+
+		name = name.replaceAll(","," ");
+		name = name.replaceAll('"'," ")
+		chatText = chatText.replaceAll(","," ");
+        chatText = chatText.replaceAll('"'," ");
 
 		outputText += name;
 		outputText += ",";
@@ -184,6 +191,9 @@ function generateCharacterListHTML(characters){
 	let excludeTh = document.createElement("th");
 	excludeTh.innerText = "除外する"
 
+	let replaceTh = document.createElement("th");
+	replaceTh.innerText = "置換"
+
 	let nameTh = document.createElement("th");
 	nameTh.innerText = "キャラクター名"
 
@@ -192,6 +202,7 @@ function generateCharacterListHTML(characters){
 
 	firstTr.appendChild(excludeTh)
 	firstTr.appendChild(nameTh)
+	firstTr.appendChild(replaceTh)
 	firstTr.appendChild(colorTh)
 	tableNode.appendChild(firstTr);
 
@@ -215,6 +226,16 @@ function generateCharacterListHTML(characters){
 		let nameTd = document.createElement("td");
 		nameTd.innerText = val.name;
 
+		let replaceTd = document.createElement("td");
+		let replaceInput = document.createElement("input");
+		replaceInput.type = "text"
+		replaceInput.addEventListener("input",()=>{
+			console.log(replaceInput.value)
+			replaceCharacters[val.name] = replaceInput.value;
+			outputElem.value = generateCSVText(chat,excludeCharacters,replaceCharacters);
+		})
+		replaceTd.appendChild(replaceInput);
+
 		let colorTd = document.createElement("td");
 		// colorTd.innerText = val.color;
         let colorInput = document.createElement("input");
@@ -228,6 +249,7 @@ function generateCharacterListHTML(characters){
 
 		tr.appendChild(excludeTd);
 		tr.appendChild(nameTd);
+		tr.appendChild(replaceTd);
 		tr.appendChild(colorTd);
 		tableNode.appendChild(tr);
 	})

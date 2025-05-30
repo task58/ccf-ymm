@@ -254,6 +254,13 @@ function generateCharacterListHTML(characters){
 		tableNode.appendChild(tr);
 	})
 
-
 	return tableNode;
+}
+
+class YMMCharacterSettings{
+	Name = "Name"
+	GroupeName = "CCF-YMM-DEFAULT"
+	Color = "#FFFFFF"
+
+
 }

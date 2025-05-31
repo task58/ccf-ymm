@@ -306,7 +306,7 @@ class YMMP{
 
 class YMMCharacterSettings{
 	Name = "Name"
-	GroupeName = "CCF-YMM-DEFAULT"
+	GroupName = "CCF-YMM-DEFAULT"
 	Color = "#FFFFFF00"
 	// Layer = 0
 	// KeyGesture = {
@@ -343,7 +343,7 @@ class YMMCharacterSettings{
     }
 	AdditionalTime = 0.1
 	FontColor = "#FFFFFFFF"
-	Style = "Normal"
+	Style = "Border"
 	StyleColor = "#FFFF0000"
 	JimakuVideoEffects = []
 

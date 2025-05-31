@@ -25,11 +25,14 @@ let uploadButton
 /** @type HTMLElement | null */
 let charactersOutputElem;
 
+/** @type HTMLElement | null */
+let YMMPDownloadButton;
+
 let perser = new DOMParser();
 
 let chat = [];
 let characters = [];
-let charactersInfos = [];
+let characterInfos = [];
 let replaceCharacters = {}
 let excludeCharacters = [];
 
@@ -46,13 +49,14 @@ function onWindowLoad(){
     uploadFileElem = document.getElementById("up_file");
     uploadButton = document.getElementById("up_btn");
 	charactersOutputElem = document.getElementById("ch_out");
+	YMMPDownloadButton = document.getElementById("dl_ymmp");
 
     submitButton.addEventListener("click",()=>{
         // console.log("clicked");
 
 		chat = []
 		characters = []
-		charactersInfos = []
+		characterInfos = []
 		replaceCharacters = {}
 		excludeCharacters = []
 
@@ -77,7 +81,7 @@ function onWindowLoad(){
 
             if(!characters.includes(chName)){
                 characters.push(chName);
-				charactersInfos.push({
+				characterInfos.push({
 					name: chName,
 					color: color
 				});
@@ -88,12 +92,12 @@ function onWindowLoad(){
 
 		// console.log(charactersInfos);
 
-        outputElem.value = generateCSVText(chat,excludeCharacters);
+        outputElem.value = generateCSVText();
 
         // plOutputElem.value = characters.toString().replaceAll(",","\n");
 
 		charactersOutputTable?.remove();
-		charactersOutputTable = generateCharacterListHTML(charactersInfos);
+		charactersOutputTable = generateCharacterListHTML(characterInfos);
 		charactersOutputElem.appendChild(charactersOutputTable);
 
 		// console.log(chat)
@@ -140,19 +144,30 @@ function onWindowLoad(){
 
         reader.addEventListener("load",load)
     })
+
+	YMMPDownloadButton.addEventListener("click",()=>{
+        let text = JSON.stringify(generateCharacterYMMPJson());
+        let blob = new Blob([text],{type:"application/json"});
+        let url = URL.createObjectURL(blob);
+		
+		let a = document.createElement("a");
+		a.href = url;
+        let now = new Date();
+
+		a.download = `CCF_YMMP_${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.ymmp`;
+		a.click();
+		a.remove();
+		URL.revokeObjectURL(url);
+    })
 }
 
 window.addEventListener("load",onWindowLoad);
 
-/**
- * 
- * @param {string[][]} chatArr 
- * @param {string[]} excludeCharacters 
- */
-function generateCSVText(chatArr,excludeCharacters = [],replaceCharacters = {}){
+//CSVテキストを生成する
+function generateCSVText(){
 	let outputText = "";
 	
-	chatArr.forEach((val)=>{
+	chat.forEach((val)=>{
 		let name = val[0];
 		let chatText = val[1];
 
@@ -176,14 +191,13 @@ function generateCSVText(chatArr,excludeCharacters = [],replaceCharacters = {}){
 		outputText += "\n";
 	})
 
+	console.log(JSON.stringify(new YMMCharacterSettings()))
+
 	return outputText;
 }
 
-/**
- * 
- * @param {string[]} characters 
- */
-function generateCharacterListHTML(characters){
+//キャラクターリストのDOMを作成する
+function generateCharacterListHTML(){
 	let tableNode = document.createElement("table");
 
 	let firstTr = document.createElement("tr");
@@ -206,7 +220,7 @@ function generateCharacterListHTML(characters){
 	firstTr.appendChild(colorTh)
 	tableNode.appendChild(firstTr);
 
-	characters.forEach((val,index)=>{
+	characterInfos.forEach((val,index)=>{
 		let tr = document.createElement("tr");
 
 		let excludeTd = document.createElement("td");
@@ -242,7 +256,7 @@ function generateCharacterListHTML(characters){
         colorInput.type = "color";
         colorInput.value = val.color;
         colorInput.addEventListener("input",()=>{
-            charactersInfos[index].color = colorInput.value;
+            characterInfos[index].color = colorInput.value;
             // console.log(charactersInfos[index].color);
         })
         colorTd.appendChild(colorInput);
@@ -257,10 +271,80 @@ function generateCharacterListHTML(characters){
 	return tableNode;
 }
 
+/**
+ * 
+ * @returns 
+ */
+function generateCharacterYMMPJson(){
+
+	let ymmp = new YMMP();
+
+	characterInfos.forEach((val)=>{
+
+		let name = val.name;
+		let color = val.color;
+
+		if(excludeCharacters.includes(name))return;
+		if(name in replaceCharacters)name = replaceCharacters[name];
+
+		let ycs = new YMMCharacterSettings()
+		ycs.Name = name;
+		ycs.Color = val.color;
+		
+		ycs.StyleColor = val.color;
+
+		ymmp.Characters.push(ycs)
+	})
+
+	return ymmp;
+}
+
+class YMMP{
+	/** @type YMMCharacterSettings[] */
+	Characters = []
+}
+
 class YMMCharacterSettings{
 	Name = "Name"
 	GroupeName = "CCF-YMM-DEFAULT"
-	Color = "#FFFFFF"
-
+	Color = "#FFFFFF00"
+	// Layer = 0
+	// KeyGesture = {
+	// 	"Key" : 75,
+	// 	"Modifiers" : 2
+	// }
+	Voice = {
+		"API" : "AquesTalk",
+		"Arg" : "f1"
+	}
+	Volume = {
+		"Values" : [
+			{
+				"Value" : 100.0
+			}
+		],
+		"Span" : 0.0,
+		"AnimationType": "なし"
+	}
+	Pan = {
+		"Values" : [
+			{
+				"Value" : 0.0
+			}
+		],
+		"Span" : 0.0,
+		"AnimationType": "なし"
+	}
+	PlaybackRate = 100.0
+	VoiceParameter = {
+        "$type": "YukkuriMovieMaker.Voice.AquesTalk1VoiceParameter, YukkuriMovieMaker",
+    	"Speed": 130,
+    	"EngineVersion": "V1_7"
+    }
+	AdditionalTime = 0.1
+	FontColor = "#FFFFFFFF"
+	Style = "Normal"
+	StyleColor = "#FFFF0000"
+	JimakuVideoEffects = []
 
 }

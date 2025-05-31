@@ -342,6 +342,57 @@ class YMMCharacterSettings{
     	"EngineVersion": "V1_7"
     }
 	AdditionalTime = 0.1
+
+	X = {
+		"Values": [
+            {
+            	"Value": 0.0
+            }
+        ],
+        "Span": 0.0,
+        "AnimationType": "なし"
+	}
+	Y = {
+		"Values": [
+            {
+            	"Value": 500
+            }
+        ],
+        "Span": 0.0,
+        "AnimationType": "なし"
+	}
+	Z = {
+		"Values": [
+            {
+            	"Value": 0.0
+            }
+        ],
+        "Span": 0.0,
+        "AnimationType": "なし"
+	}
+
+	FontSize = {
+		"Values": [
+            {
+            	"Value": 50.0
+            }
+        ],
+        "Span": 0.0,
+        "AnimationType": "なし"
+	}
+
+	WordWrap = "WholeWord"
+	MaxWidth = {
+		"Values": [
+            {
+            	"Value": 1900.0
+            }
+        ],
+        "Span": 0.0,
+        "AnimationType": "なし"
+	}
+
+	BasePoint = "CenterBottom"
 	FontColor = "#FFFFFFFF"
 	Style = "Border"
 	StyleColor = "#FFFF0000"

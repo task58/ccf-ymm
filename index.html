@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ここふぉログからYMM台本を生成するツール</title>
+    <meta name="description" content="ccfoliaで出力したログをもとに、YMM4で利用可能な台本ファイルと、一部のキャラクター設定を含むymmpファイルを作成します。">
+    <title>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</title>
     <script src="./index.js"></script>
 	<style>
 		table, th, td {
@@ -12,7 +13,20 @@
 	</style>
 </head>
 <body>
-    <h1>ここふぉログからYMM台本を生成するツール</h1>
+    <h1>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</h1>
+
+    <details>
+        <summary>使い方</summary>
+        <p>1.ログのHTMLをテキストエリアに貼り付けるか、ファイルを選択してアップロードボタンを押す</p>
+        <p>2.変換ボタンを押す</p>
+        <p>3.キャラクター一覧から除外設定や置換設定等をする</p>
+        <p>4.台本ファイルとキャラクター情報を含むYMMPファイルをダウンロードする</p>
+        <p>5.ダウンロードしたYMMPファイルを開き、キャラクター設定を調整する</p>
+        <p>6.台本ファイルを読み込み、音声を生成</p>
+        <p>7.あとは普通に編集してください</p>
+    </details>
+
+    <br>
 
     <input type="file" name="upload" id="up_file"><input type="button" value="アップロード" id="up_btn">
     <br>

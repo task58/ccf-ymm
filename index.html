@@ -3,32 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ここふぉログからYMM台本を生成するツール</title>
+    <meta name="description" content="ccfoliaで出力したログをもとに、YMM4で利用可能な台本ファイルと、一部のキャラクター設定を含むymmpファイルを作成します。">
+    <title>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</title>
     <script src="./index.js"></script>
-	<style>
-		table, th, td {
-  			border: 1px solid black;
-		}
-	</style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>ここふぉログからYMM台本を生成するツール</h1>
+    <h1>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</h1>
 
-    <input type="file" name="upload" id="up_file"><input type="button" value="アップロード" id="up_btn">
+    <details>
+        <summary>使い方</summary>
+        <ol>
+            <li>ログのHTMLをテキストエリアに貼り付けるか、ファイルを選択してアップロードボタンを押す</li>
+            <li>変換ボタンを押す</li>
+            <li>キャラクター一覧から除外設定や置換設定等をする</li>
+            <li>台本ファイルとキャラクター情報を含むYMMPファイルをダウンロードする</li>
+            <li>ダウンロードしたYMMPファイルを開き、キャラクター設定を調整する</li>
+            <li>台本ファイルを読み込み、音声を生成</li>
+            <li>あとは普通に編集してください</li>
+        </ol>
+        
+    </details>
+    <details>
+        <summary>リンク類</summary>
+        <ul>
+            <li><a href="https://task58.github.io/">task58の物置</a></li>
+            <li><a href="https://github.com/task58/ccf-ymm">Githubリポジトリ</a></li>
+            <li><a href="https://github.com/task58/ccf-ymm/issues">issues(要望,バグ報告はこちらへ)</a></li>
+        </ul>
+    
+    </details>
+
+      
+    <div class="file_up">
+        <table>
+            <tr>
+                <td><input type="file" name="upload" id="up_file"></td>
+                <td><input type="button" value="アップロード" id="up_btn"></td>
+            </tr>
+        </table>
+    </div>
     <br>
-	<p>ログのHTML</p>
-    <textarea name="input" id="input"></textarea><br>
+    <div class="option">
+        <details>
+            <summary>オプション</summary>
+            <input type="checkbox" name="opt" id=""><label for="opt">開発中</label>
+        </details>
+    </div>
+    <div class="loginput">
+        <p>ログのHTML</p>
+        <textarea name="input" id="input"></textarea>
+        <p><input type="button" id="submit" value="変換"></p>
+    </div>
     <br>
-    <input type="button" id="submit" value="変換"><br>
-    <input type="button" id="copy" value="台本をクリップボードにコピー">
-    <input type="button" id="download" value="台本をダウンロード">
+    <div>
+        <input type="button" id="copy" value="台本をクリップボードにコピー">
+        <input type="button" id="download" value="台本をダウンロード">
+    </div>
+    
+    <div class="logoutput">
+        <p>変換結果</p>
+        <textarea name="output" id="output" readonly></textarea>
+    </div>
     <br>
-    <textarea name="output" id="output" readonly style="width: 1000px; height: 500px;"></textarea><br>
     <!-- <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea> -->
     <br>
 	<p>キャラクター一覧</p>
     <input type="button" id="dl_ymmp" value="YMMPファイルをダウンロード"><br>
-	<div name="characters" id="ch_out"></div>
+	<div name="characters" id="ch_out" class="ch_out"></div>
     
 </body>
 </html>

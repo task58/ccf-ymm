@@ -1,0 +1,28 @@
+body{
+    width: 100%;
+    margin: 2%;
+}
+
+.ch_out table, .ch_out th, .ch_out td {
+  	border: 1px solid black;
+}
+
+.file_up table, .file_up th, .file_up td {
+  	border: 1px solid black;
+}
+
+.file_up td {
+    padding: 5px;
+}
+
+.loginput textarea{
+    width: 90%;
+    height: 200px;
+    resize: none;
+}
+
+.logoutput textarea{
+    width: 90%;
+    height: 200px;
+    resize: none;
+}

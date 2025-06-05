@@ -17,12 +17,12 @@ body{
 
 .loginput textarea{
     width: 90%;
-    resize: vertical;
-    min-height: 200px;
+    height: 200px;
+    resize: none;
 }
 
 .logoutput textarea{
     width: 90%;
-    min-height: 300px;
-    resize: vertical;
+    height: 200px;
+    resize: none;
 }

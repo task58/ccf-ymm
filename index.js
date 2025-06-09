@@ -16,7 +16,7 @@ let copyButton
 /** @type HTMLElement | null */
 let donwloadButton
 
-/** @type HTMLElement | null */
+/** @type HTMLInputElement | null */
 let uploadFileElem
 
 /** @type HTMLElement | null */
@@ -30,6 +30,9 @@ let YMMPDownloadButton;
 
 /** @type HTMLSelectElement */
 let colorOptionSelectElement;
+
+/** @type HTMLInputElement */
+let scriptFileNameOptionElement;
 
 /** @type HTMLInputElement */
 let divideCountOptionElement;
@@ -60,6 +63,8 @@ function onWindowLoad(){
 	YMMPDownloadButton = document.getElementById("dl_ymmp");
 
 	colorOptionSelectElement = document.getElementById("opt_color")
+
+	scriptFileNameOptionElement = document.getElementById("opt_sc_fn")
 	divideCountOptionElement = document.getElementById("opt_divc")
 
     submitButton.addEventListener("click",()=>{
@@ -146,6 +151,11 @@ function onWindowLoad(){
 
 		let now = new Date();
 		let dateStr = `${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
+
+		let fileName = scriptFileNameOptionElement.value;
+		if(!fileName){
+			fileName = `CCF_CSV_${dateStr}`
+		}
 		
 		if(divideCount > 0){
 			let count = 0;
@@ -168,7 +178,7 @@ function onWindowLoad(){
 				let a = document.createElement("a");
 				a.href = url;
         	
-				a.download = `CCF_CSV_${dateStr}_${count}.csv`;
+				a.download = `${fileName}_${count}.csv`;
 				a.click();
 				a.remove();
 				URL.revokeObjectURL(url);
@@ -180,7 +190,7 @@ function onWindowLoad(){
 			let a = document.createElement("a");
 			a.href = url;
         	
-			a.download = `CCF_CSV_${dateStr}.csv`;
+			a.download = `${fileName}.csv`;
 			a.click();
 			a.remove();
 			URL.revokeObjectURL(url);
@@ -198,12 +208,22 @@ function onWindowLoad(){
 		}
 
         let file = uploadFileElem.files[0]
+		
+		let fileName = file.name;
+		let fileNameSplit = fileName.split(".");
+		if(fileNameSplit.at(-1) == "html"){
+			fileNameSplit.splice(-1,1);
+		}
+		fileName = fileNameSplit.join(".");
+		scriptFileNameOptionElement.value = fileName;
+
 		let reader = new FileReader()
 		reader.readAsText(file)
 
         function load(){
             
             inputElem.value = reader.result;
+			
             reader.removeEventListener("load",load)
         }
 

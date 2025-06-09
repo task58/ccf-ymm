@@ -46,7 +46,7 @@
     <br>
     <div class="option">
         <details>
-            <summary>オプション</summary>
+            <summary>変換オプション</summary>
 
             <table>
                 <tr>
@@ -59,11 +59,6 @@
 			            </select>
                     </td>
                 </tr>
-                <tr>
-                    <td>台本を分割するセリフ数</td>
-                    <td><input type="number" min="0" value="0" name="opt_divc" id="opt_divc"></td>
-                    <td>(0で分割しない)</td>
-                </tr>
             </table>
         </details>
     </div>
@@ -73,14 +68,28 @@
         <p><input type="button" id="submit" value="変換"></p>
     </div>
     <br>
-    <div>
-        <input type="button" id="copy" value="台本をクリップボードにコピー">
-        <input type="button" id="download" value="台本をダウンロード">
-    </div>
-    
     <div class="logoutput">
         <p>変換結果</p>
         <textarea name="output" id="output" readonly></textarea>
+    </div>
+    <div>
+        <input type="button" id="copy" value="台本をクリップボードにコピー">
+        <input type="button" id="download" value="台本をダウンロード">
+        <details>
+            <summary>台本ダウンロードオプション</summary>
+            <table>
+                <tr>
+                    <td>台本のファイル名</td>
+                    <td><input type="text" value="" name="opt_sc_fn" id="opt_sc_fn"></td>
+                    <td>拡張子を除くファイル名。空欄の場合デフォルトのファイル名</td>
+                </tr>
+                <tr>
+                    <td>台本を分割するセリフ数</td>
+                    <td><input type="number" min="0" value="0" name="opt_divc" id="opt_divc"></td>
+                    <td>(0で分割しない)</td>
+                </tr>  
+            </table>
+        </details>
     </div>
     <br>
     <!-- <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea> -->

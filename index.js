@@ -16,7 +16,7 @@ let copyButton
 /** @type HTMLElement | null */
 let donwloadButton
 
-/** @type HTMLElement | null */
+/** @type HTMLInputElement | null */
 let uploadFileElem
 
 /** @type HTMLElement | null */
@@ -31,6 +31,12 @@ let YMMPDownloadButton;
 /** @type HTMLSelectElement */
 let colorOptionSelectElement;
 
+/** @type HTMLInputElement */
+let scriptFileNameOptionElement;
+
+/** @type HTMLInputElement */
+let divideCountOptionElement;
+
 let perser = new DOMParser();
 
 let chat = [];
@@ -41,6 +47,8 @@ let excludeCharacters = [];
 
 /**@type HTMLTableElement */
 let charactersOutputTable
+
+let divideCount = 0;
 
 function onWindowLoad(){
     inputElem = document.getElementById("input");
@@ -55,6 +63,9 @@ function onWindowLoad(){
 	YMMPDownloadButton = document.getElementById("dl_ymmp");
 
 	colorOptionSelectElement = document.getElementById("opt_color")
+
+	scriptFileNameOptionElement = document.getElementById("opt_sc_fn")
+	divideCountOptionElement = document.getElementById("opt_divc")
 
     submitButton.addEventListener("click",()=>{
         // console.log("clicked");
@@ -135,17 +146,59 @@ function onWindowLoad(){
 
     donwloadButton.addEventListener("click",()=>{
         let text = outputElem.value;
-        let blob = new Blob([text],{type:"text/csv"});
-        let url = URL.createObjectURL(blob);
-		
-		let a = document.createElement("a");
-		a.href = url;
-        let now = new Date();
 
-		a.download = `CCF_CSV_${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}.csv`;
-		a.click();
-		a.remove();
-		URL.revokeObjectURL(url);
+		let arr = generateCSVArray();
+
+		let now = new Date();
+		let dateStr = `${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
+
+		let fileName = scriptFileNameOptionElement.value;
+		if(!fileName){
+			fileName = `CCF_CSV_${dateStr}`
+		}
+		
+		if(divideCount > 0){
+			let count = 0;
+
+			while(arr.length > 0){
+
+				count++;
+
+				let out = "";
+
+				for(let c = 0;c < divideCount;c++){
+					out += arr.shift();
+
+					if(arr.length == 0)break;
+				}
+
+				let blob = new Blob([out],{type:"text/csv"});
+        		let url = URL.createObjectURL(blob);
+
+				let a = document.createElement("a");
+				a.href = url;
+        	
+				a.download = `${fileName}_${count}.csv`;
+				a.click();
+				a.remove();
+				URL.revokeObjectURL(url);
+			}
+		}else{
+			let blob = new Blob([text],{type:"text/csv"});
+        	let url = URL.createObjectURL(blob);
+
+			let a = document.createElement("a");
+			a.href = url;
+        	
+			a.download = `${fileName}.csv`;
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(url);
+		}
+
+		
+
+        
     })
 
     uploadButton.addEventListener("click",()=>{
@@ -155,12 +208,22 @@ function onWindowLoad(){
 		}
 
         let file = uploadFileElem.files[0]
+		
+		let fileName = file.name;
+		let fileNameSplit = fileName.split(".");
+		if(fileNameSplit.at(-1) == "html"){
+			fileNameSplit.splice(-1,1);
+		}
+		fileName = fileNameSplit.join(".");
+		scriptFileNameOptionElement.value = fileName;
+
 		let reader = new FileReader()
 		reader.readAsText(file)
 
         function load(){
             
             inputElem.value = reader.result;
+			
             reader.removeEventListener("load",load)
         }
 
@@ -181,13 +244,62 @@ function onWindowLoad(){
 		a.remove();
 		URL.revokeObjectURL(url);
     })
+
+	divideCountOptionElement.addEventListener("change",()=>{
+		divideCount = parseInt(divideCountOptionElement.value);
+		if(divideCount < 0)divideCount = 0;
+		if(isNaN(divideCount))divideCount = 0;
+	})
 }
 
 window.addEventListener("load",onWindowLoad);
 
 //CSVテキストを生成する
 function generateCSVText(){
-	let outputText = "";
+	// let outputText = "";
+	
+	// chat.forEach((val)=>{
+	// 	let name = val[0];
+	// 	let chatText = val[1];
+
+	// 	name = name.trim();
+	// 	chatText = chatText.trim();
+
+	// 	if(excludeCharacters.includes(name))return;
+
+	// 	if(replaceCharacters[name]){
+	// 		name = replaceCharacters[name];
+	// 	}
+
+	// 	name = name.replaceAll(","," ");
+	// 	name = name.replaceAll('"'," ")
+	// 	chatText = chatText.replaceAll(","," ");
+    //     chatText = chatText.replaceAll('"'," ");
+
+	// 	outputText += name;
+	// 	outputText += ",";
+	// 	outputText += chatText;
+	// 	outputText += "\n";
+	// })
+
+	// return outputText;
+
+	let arr = generateCSVArray();
+	let outTxt = "";
+	for(let v of arr){
+		outTxt += v;
+	}
+
+	return outTxt;
+}
+
+/**
+ * 
+ * @returns string[]
+ */
+function generateCSVArray(){
+	/** @type string[] */
+	let outputArr = [];
 	
 	chat.forEach((val)=>{
 		let name = val[0];
@@ -207,15 +319,14 @@ function generateCSVText(){
 		chatText = chatText.replaceAll(","," ");
         chatText = chatText.replaceAll('"'," ");
 
-		outputText += name;
-		outputText += ",";
-		outputText += chatText;
-		outputText += "\n";
+		let txt = name;
+		txt += ",";
+		txt += chatText;
+		txt += "\n";
+		outputArr.push(txt);
 	})
 
-	console.log(JSON.stringify(new YMMCharacterSettings()))
-
-	return outputText;
+	return outputArr;
 }
 
 //キャラクターリストのDOMを作成する

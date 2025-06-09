@@ -28,6 +28,9 @@ let charactersOutputElem;
 /** @type HTMLElement | null */
 let YMMPDownloadButton;
 
+/** @type HTMLSelectElement */
+let colorOptionSelectElement;
+
 let perser = new DOMParser();
 
 let chat = [];
@@ -51,6 +54,8 @@ function onWindowLoad(){
 	charactersOutputElem = document.getElementById("ch_out");
 	YMMPDownloadButton = document.getElementById("dl_ymmp");
 
+	colorOptionSelectElement = document.getElementById("opt_color")
+
     submitButton.addEventListener("click",()=>{
         // console.log("clicked");
 
@@ -71,7 +76,13 @@ function onWindowLoad(){
 			let c = paragraph.style.color.substring(4).slice(0,-1).split(",");
 			let color = "#";
 			c.forEach((v)=>{
-				color+= parseInt(v).toString(16);
+				let int = parseInt(v);
+				let str = int.toString(16);
+				if(str.length == 1){
+					str = "0" + str;
+				}
+				console.log(int,str)
+				color+= str
 			})
 
 			// console.log(color);
@@ -80,12 +91,23 @@ function onWindowLoad(){
             let chatText = paragraph.children[2].innerText.trim().replaceAll(","," ");
 
             if(!characters.includes(chName)){
+
+				if(colorOptionSelectElement.value == "default"){
+					color = "#888888"
+				}
+
                 characters.push(chName);
 				characterInfos.push({
 					name: chName,
 					color: color
 				});
-            }
+            }else{
+				if(colorOptionSelectElement.value == "last"){
+					console.log(characters.indexOf(chName))
+					characterInfos[characters.indexOf(chName)].color = color;
+					console.log(characterInfos[characters.indexOf(chName)])
+				}
+			}
 
 			chat.push([chName,chatText])
         }

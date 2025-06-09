@@ -47,12 +47,24 @@
     <div class="option">
         <details>
             <summary>オプション</summary>
-			<label for="opt_color">キャラクターの色</label>
-            <select name="opt_color" id="opt_color">
-				<option value="first">最初の色</option>
-				<option value="last">最後の色</option>
-				<option value="default">デフォルトの色(#888888)</option>
-			</select>
+
+            <table>
+                <tr>
+                    <td>キャラクターの色</td>
+                    <td>
+                        <select name="opt_color" id="opt_color">
+				            <option value="first">最初の色</option>
+				            <option value="last">最後の色</option>
+				            <option value="default">デフォルトの色(#888888)</option>
+			            </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>台本を分割するセリフ数</td>
+                    <td><input type="number" min="0" value="0" name="opt_divc" id="opt_divc"></td>
+                    <td>(0で分割しない)</td>
+                </tr>
+            </table>
         </details>
     </div>
     <div class="loginput">

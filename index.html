@@ -1,102 +1,115 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ccfoliaで出力したログをもとに、YMM4で利用可能な台本ファイルと、一部のキャラクター設定を含むymmpファイルを作成します。">
-    <title>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</title>
-    <script src="./index.js"></script>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="ccfoliaで出力したログをもとに、YMM4で利用可能な台本ファイルと、一部のキャラクター設定を含むymmpファイルを作成します。">
+	<title>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</title>
+	<script src="./index.js"></script>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>ここふぉログからYMM台本(とキャラクター情報を含むymmp)を生成するツール</h1>
+	<h1>ここふぉログからYMM台本(とキャラクター情報を含むymmp)などを生成するツール</h1>
 
-    <details>
-        <summary>使い方</summary>
-        <ol>
-            <li>ログのHTMLをテキストエリアに貼り付けるか、ファイルを選択してアップロードボタンを押す</li>
-            <li>変換ボタンを押す</li>
-            <li>キャラクター一覧から除外設定や置換設定等をする</li>
-            <li>台本ファイルとキャラクター情報を含むYMMPファイルをダウンロードする</li>
-            <li>ダウンロードしたYMMPファイルを開き、キャラクター設定を調整する</li>
-            <li>台本ファイルを読み込み、音声を生成</li>
-            <li>あとは普通に編集してください</li>
-        </ol>
-        
-    </details>
-    <details>
-        <summary>リンク類</summary>
-        <ul>
-            <li><a href="https://task58.github.io/">task58の物置</a></li>
-            <li><a href="https://github.com/task58/ccf-ymm">Githubリポジトリ</a></li>
-            <li><a href="https://github.com/task58/ccf-ymm/issues">issues(要望,バグ報告はこちらへ)</a></li>
-        </ul>
-    
-    </details>
+	<details>
+		<summary>ざっくり使い方</summary>
+		<ol>
+			<li>ccforiaでログを出力する(htmlファイルがダウンロードされます)</li>
+			<li>ログのHTMLをテキストエリアに貼り付けるか、ファイルを選択してアップロードボタンを押す</li>
+			<li>変換オプションを設定する</li>
+			<li>変換ボタンを押す</li>
+			<li>キャラクター一覧から除外設定や置換設定等をする</li>
+			<li>台本ファイルとキャラクター情報を含むYMMPファイルをダウンロードする</li>
+			<li>ダウンロードしたYMMPファイルを開き、キャラクター設定を調整する</li>
+			<li>台本ファイルを読み込み、音声を生成</li>
+			<li>あとは普通に編集してください</li>
+		</ol>
+		
+	</details>
+	<details>
+		<summary>リンク類</summary>
+		<ul>
+			<li><a href="https://task58.github.io/" target="_blank" rel="noopener noreferrer">task58の物置</a></li>
+			<li><a href="https://github.com/task58/ccf-ymm" target="_blank" rel="noopener noreferrer">Githubリポジトリ</a></li>
+			<li><a href="https://github.com/task58/ccf-ymm/issues" target="_blank" rel="noopener noreferrer">issues(要望,バグ報告はこちらへ)</a></li>
+		</ul>
+	
+	</details>
 
-      
-    <div class="file_up">
-        <table>
-            <tr>
-                <td><input type="file" name="upload" id="up_file"></td>
-                <td><input type="button" value="アップロード" id="up_btn"></td>
-            </tr>
-        </table>
-    </div>
-    <br>
-    <div class="option">
-        <details>
-            <summary>変換オプション</summary>
+	  
+	<div class="file_up">
+		<table>
+			<tr>
+				<td><input type="file" name="upload" id="up_file"></td>
+				<td><input type="button" value="アップロード" id="up_btn"></td>
+			</tr>
+		</table>
+	</div>
+	<br>
+	<div class="option">
+		<details>
+			<summary>変換オプション</summary>
 
-            <table>
-                <tr>
-                    <td>キャラクターの色</td>
-                    <td>
-                        <select name="opt_color" id="opt_color">
-				            <option value="first">最初の色</option>
-				            <option value="last">最後の色</option>
-				            <option value="default">デフォルトの色(#888888)</option>
-			            </select>
-                    </td>
-                </tr>
-            </table>
-        </details>
-    </div>
-    <div class="loginput">
-        <p>ログのHTML</p>
-        <textarea name="input" id="input"></textarea>
-        <p><input type="button" id="submit" value="変換"></p>
-    </div>
-    <br>
-    <div class="logoutput">
-        <p>変換結果</p>
-        <textarea name="output" id="output" readonly></textarea>
-    </div>
-    <div>
-        <input type="button" id="copy" value="台本をクリップボードにコピー">
-        <input type="button" id="download" value="台本をダウンロード">
-        <details>
-            <summary>台本ダウンロードオプション</summary>
-            <table>
-                <tr>
-                    <td>台本のファイル名</td>
-                    <td><input type="text" value="" name="opt_sc_fn" id="opt_sc_fn"></td>
-                    <td>拡張子を除くファイル名。空欄の場合デフォルトのファイル名</td>
-                </tr>
-                <tr>
-                    <td>台本を分割するセリフ数</td>
-                    <td><input type="number" min="0" value="0" name="opt_divc" id="opt_divc"></td>
-                    <td>(0で分割しない)</td>
-                </tr>  
-            </table>
-        </details>
-    </div>
-    <br>
-    <!-- <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea> -->
-    <br>
+			<table>
+				<tr>
+					<td>キャラクターの色</td>
+					<td>
+						<select name="opt_color" id="opt_color">
+							<option value="first">最初の色</option>
+							<option value="last">最後の色</option>
+							<option value="default">デフォルトの色(#888888)</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>変換形式</td>
+					<td>
+						<select name="opt_type" id="opt_type">
+							<option value="csv">csv形式台本(キャラ名,セリフ)</option>
+							<option value="tsv">tsv形式台本(キャラ名[tab]セリフ)</option>
+							<option value="txt">txt形式台本(キャラ名「セリフ」)</option>
+							<option value="plain">セリフの羅列</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</details>
+	</div>
+	<div class="loginput">
+		<p>ログのHTML</p>
+		<textarea name="input" id="input"></textarea>
+		<p><input type="button" id="submit" value="変換"></p>
+	</div>
+	<br>
+	<div class="logoutput">
+		<p>変換結果</p>
+		<textarea name="output" id="output" readonly></textarea>
+	</div>
+	<div>
+		<input type="button" id="copy" value="台本をクリップボードにコピー">
+		<input type="button" id="download" value="台本をダウンロード">
+		<details>
+			<summary>台本ダウンロードオプション</summary>
+			<table>
+				<tr>
+					<td>台本のファイル名</td>
+					<td><input type="text" value="" name="opt_sc_fn" id="opt_sc_fn"></td>
+					<td>拡張子を除くファイル名。空欄の場合デフォルトのファイル名</td>
+				</tr>
+				<tr>
+					<td>台本を分割するセリフ数</td>
+					<td><input type="number" min="0" value="0" name="opt_divc" id="opt_divc"></td>
+					<td>(0で分割しない)</td>
+				</tr>  
+			</table>
+		</details>
+	</div>
+	<br>
+	<!-- <textarea name="pls_out" id="pls_out" readonly style="width: 500px; height: 500px;"></textarea> -->
+	<br>
 	<p>キャラクター一覧</p>
-    <input type="button" id="dl_ymmp" value="YMMPファイルをダウンロード"><br>
+	<input type="button" id="dl_ymmp" value="YMMPファイルをダウンロード"><br>
 	<div name="characters" id="ch_out" class="ch_out"></div>
-    
+	
 </body>
 </html>

@@ -31,6 +31,9 @@ let YMMPDownloadButton;
 /** @type HTMLSelectElement */
 let colorOptionSelectElement;
 
+/** @type HTMLSelectElement */
+let typeOptionSelectElement;
+
 /** @type HTMLInputElement */
 let scriptFileNameOptionElement;
 
@@ -50,6 +53,8 @@ let charactersOutputTable
 
 let divideCount = 0;
 
+let type = "csv"
+
 function onWindowLoad(){
     inputElem = document.getElementById("input");
     outputElem = document.getElementById("output");
@@ -63,6 +68,7 @@ function onWindowLoad(){
 	YMMPDownloadButton = document.getElementById("dl_ymmp");
 
 	colorOptionSelectElement = document.getElementById("opt_color")
+	typeOptionSelectElement = document.getElementById("opt_type")
 
 	scriptFileNameOptionElement = document.getElementById("opt_sc_fn")
 	divideCountOptionElement = document.getElementById("opt_divc")
@@ -78,6 +84,8 @@ function onWindowLoad(){
 
         let inputText = inputElem.value;
         let html = perser.parseFromString(inputText,"text/html")
+
+		type = typeOptionSelectElement.value;
 
 		/**@type HTMLParagraphElement[] */
         let paragraphs = html.body.children;
@@ -125,7 +133,7 @@ function onWindowLoad(){
 
 		// console.log(charactersInfos);
 
-        outputElem.value = generateCSVText();
+        outputElem.value = generateScriptText();
 
         // plOutputElem.value = characters.toString().replaceAll(",","\n");
 
@@ -147,10 +155,33 @@ function onWindowLoad(){
     donwloadButton.addEventListener("click",()=>{
         let text = outputElem.value;
 
-		let arr = generateCSVArray();
+		let arr = generateScriptArray();
 
 		let now = new Date();
 		let dateStr = `${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
+
+		let ext = "";
+		let mimeType = "";
+
+		switch (type) {
+			case "csv":
+				ext = "csv"
+				mimeType = "text/csv"
+				break;
+		
+			case "tsv":
+				ext = "tsv"
+				mimeType = "text/tab-separated-values"
+				break;
+
+			case "txt":
+				ext = "txt"
+				mimeType = "text/plain"
+				break;
+
+			default:
+				break;
+		}
 
 		let fileName = scriptFileNameOptionElement.value;
 		if(!fileName){
@@ -172,25 +203,25 @@ function onWindowLoad(){
 					if(arr.length == 0)break;
 				}
 
-				let blob = new Blob([out],{type:"text/csv"});
+				let blob = new Blob([out],{type:mimeType});
         		let url = URL.createObjectURL(blob);
 
 				let a = document.createElement("a");
 				a.href = url;
         	
-				a.download = `${fileName}_${count}.csv`;
+				a.download = `${fileName}_${count}.${ext}`;
 				a.click();
 				a.remove();
 				URL.revokeObjectURL(url);
 			}
 		}else{
-			let blob = new Blob([text],{type:"text/csv"});
+			let blob = new Blob([text],{type:mimeType});
         	let url = URL.createObjectURL(blob);
 
 			let a = document.createElement("a");
 			a.href = url;
         	
-			a.download = `${fileName}.csv`;
+			a.download = `${fileName}.${ext}`;
 			a.click();
 			a.remove();
 			URL.revokeObjectURL(url);
@@ -255,36 +286,9 @@ function onWindowLoad(){
 window.addEventListener("load",onWindowLoad);
 
 //CSVテキストを生成する
-function generateCSVText(){
-	// let outputText = "";
-	
-	// chat.forEach((val)=>{
-	// 	let name = val[0];
-	// 	let chatText = val[1];
+function generateScriptText(){
 
-	// 	name = name.trim();
-	// 	chatText = chatText.trim();
-
-	// 	if(excludeCharacters.includes(name))return;
-
-	// 	if(replaceCharacters[name]){
-	// 		name = replaceCharacters[name];
-	// 	}
-
-	// 	name = name.replaceAll(","," ");
-	// 	name = name.replaceAll('"'," ")
-	// 	chatText = chatText.replaceAll(","," ");
-    //     chatText = chatText.replaceAll('"'," ");
-
-	// 	outputText += name;
-	// 	outputText += ",";
-	// 	outputText += chatText;
-	// 	outputText += "\n";
-	// })
-
-	// return outputText;
-
-	let arr = generateCSVArray();
+	let arr = generateScriptArray();
 	let outTxt = "";
 	for(let v of arr){
 		outTxt += v;
@@ -297,7 +301,7 @@ function generateCSVText(){
  * 
  * @returns string[]
  */
-function generateCSVArray(){
+function generateScriptArray(){
 	/** @type string[] */
 	let outputArr = [];
 	
@@ -314,19 +318,77 @@ function generateCSVArray(){
 			name = replaceCharacters[name];
 		}
 
-		name = name.replaceAll(","," ");
-		name = name.replaceAll('"'," ")
-		chatText = chatText.replaceAll(","," ");
-        chatText = chatText.replaceAll('"'," ");
+		// name = name.replaceAll(","," ");
+		// name = name.replaceAll('"'," ")
+		// chatText = chatText.replaceAll(","," ");
+        // chatText = chatText.replaceAll('"'," ");
 
-		let txt = name;
-		txt += ",";
-		txt += chatText;
+		
+
+		let txt = "";
+
+		switch (type) {
+			case "csv":
+				name = CSVEscape(name);
+				chatText = CSVEscape(chatText);
+				txt += name;
+				txt += ",";
+				txt += chatText;	
+				break;
+		
+			case "tsv":
+				name = TSVEscape(name);
+				chatText = TSVEscape(chatText);
+				txt += name;
+				txt += "	";
+				txt += chatText;	
+				break;
+
+			case "txt":
+				name = TXTEscape(name);
+				chatText = TXTEscape(chatText);
+				txt += name;
+				txt += "「";
+				txt += chatText;
+				txt += "」";	
+				break;
+
+			default:
+				break;
+		}
+
 		txt += "\n";
 		outputArr.push(txt);
 	})
 
 	return outputArr;
+}
+
+/**
+ * 
+ * @param {string} text 
+ * @returns 
+ */
+function CSVEscape(text){
+	return text.replaceAll(","," ").replaceAll('"'," ")
+}
+
+/**
+ * 
+ * @param {string} text 
+ * @returns 
+ */
+function TSVEscape(text){
+	return text.replaceAll("	"," ")
+}
+
+/**
+ * 
+ * @param {string} text 
+ * @returns 
+ */
+function TXTEscape(text){
+	return text.replaceAll("「"," ").replaceAll("」"," ")
 }
 
 //キャラクターリストのDOMを作成する
@@ -365,7 +427,7 @@ function generateCharacterListHTML(){
 			}else{
 				excludeCharacters.splice(excludeCharacters.indexOf(val.name),1);
 			}
-			outputElem.value = generateCSVText(chat,excludeCharacters);
+			outputElem.value = generateScriptText(chat,excludeCharacters);
 		})
 
 		excludeTd.appendChild(excludeCheckBox);
@@ -379,7 +441,7 @@ function generateCharacterListHTML(){
 		replaceInput.addEventListener("input",()=>{
 			console.log(replaceInput.value)
 			replaceCharacters[val.name] = replaceInput.value;
-			outputElem.value = generateCSVText(chat,excludeCharacters,replaceCharacters);
+			outputElem.value = generateScriptText(chat,excludeCharacters,replaceCharacters);
 		})
 		replaceTd.appendChild(replaceInput);
 

@@ -87,6 +87,8 @@ function onWindowLoad(){
 
 		type = typeOptionSelectElement.value;
 
+		console.log("type: ",type)
+
 		/**@type HTMLParagraphElement[] */
         let paragraphs = html.body.children;
 
@@ -100,7 +102,7 @@ function onWindowLoad(){
 				if(str.length == 1){
 					str = "0" + str;
 				}
-				console.log(int,str)
+				// console.log(int,str)
 				color+= str
 			})
 
@@ -175,6 +177,11 @@ function onWindowLoad(){
 				break;
 
 			case "txt":
+				ext = "txt"
+				mimeType = "text/plain"
+				break;
+			
+			case "plain":
 				ext = "txt"
 				mimeType = "text/plain"
 				break;
@@ -351,6 +358,10 @@ function generateScriptArray(){
 				txt += "「";
 				txt += chatText;
 				txt += "」";	
+				break;
+			
+			case "plain":
+				txt += chatText;
 				break;
 
 			default:
